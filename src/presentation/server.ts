@@ -21,9 +21,19 @@ export class Server {
 
     async start() {
 
-        this.app.use(this.routes);
+        // Middlewares
+        this.app.use( express.json() );
+        this.app.use( express.urlencoded({ extended: true }) ); // x-www-
+    
+    
+        // Usar las rutas definidas
+        this.app.use( this.routes );
+    
+        // Escuchar el puerto
         this.app.listen(this.port, () => {
-            console.log(`Server running on port ${this.port}`);
+          console.log(`Server running on port ${ this.port }`);
         })
+    
+      }
+    
     }
-}
