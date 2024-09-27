@@ -17,10 +17,10 @@ export class AuthMiddleware {
 
 try {
 
-        const payload = await JwtAdapter.validateToken(token);
+        const payload = await JwtAdapter.validateToken<{ id: string }>(token);
         if ( !payload ) return res.status(401).json({ error: 'Invalid token' });
 
-        req.body.payload = payload 
+        req.body.payload = payload;
 
         next();
 
