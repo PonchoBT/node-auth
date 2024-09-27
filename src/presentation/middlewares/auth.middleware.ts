@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { JwtAdapter } from '../../config';
+import { UserModel } from '../../data/mongodb';
 
 
 
@@ -20,7 +21,12 @@ try {
         const payload = await JwtAdapter.validateToken<{ id: string }>(token);
         if ( !payload ) return res.status(401).json({ error: 'Invalid token' });
 
-        req.body.payload = payload;
+        const user = await UserModel.findById(payload.id);
+        if ( !user ) return res.status(401).json({ error: 'Invalid token - user not found' })
+
+
+
+        req.body.user = user;
 
         next();
 
