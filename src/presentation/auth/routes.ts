@@ -1,25 +1,34 @@
-import { Router } from "express";
-import { AuthController } from "./controller";
-import { AuthDatasourceImpl, AuthRepositoryImpl } from '../../infastructure';
+import { Router } from 'express';
+import { AuthController } from './controller';
+import { AuthDatasourceImpl, AuthRepositoryImpl } from '../../infrastructure';
 import { AuthMiddleware } from '../middlewares/auth.middleware';
+
+
+
 
 export class AuthRoutes {
 
-   static get routes(): Router {
 
-      const router = Router();
-     
+  static get routes(): Router {
 
-      const datasource = new AuthDatasourceImpl();
-      const authRepository = new AuthRepositoryImpl(datasource);
-      const controller = new AuthController(authRepository);
+    const router = Router();
 
-      router.post('/login', controller.loginUser)
-      router.post('/register',controller.registerUser)
+    const datasource = new AuthDatasourceImpl();
+    const authRepository = new AuthRepositoryImpl(datasource);
 
-      router.get('/', [AuthMiddleware.validateJWT] ,controller.getUsers );
+    const controller = new AuthController(authRepository);
 
-      return router;
+    // Definir todas mis rutas principales
+    router.post('/login', controller.loginUser )
+    router.post('/register', controller.registerUser)
+    
+    router.get('/', [AuthMiddleware.validateJWT] ,controller.getUsers );
+    
+    
 
-   }
-} 
+
+    return router;
+  }
+
+
+}

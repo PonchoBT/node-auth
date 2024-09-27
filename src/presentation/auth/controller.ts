@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
-import { AuthRepository, CustomError, RegisterUserDto } from '../../domain';
-import { JwtAdapter } from "../../config";
+import { AuthRepository, CustomError, RegisterUserDto, RegisterUser, LoginUserDto, LoginUser } from '../../domain';
 import { UserModel } from '../../data/mongodb';
 
 export class AuthController {
@@ -20,27 +19,38 @@ export class AuthController {
   }
 
 
-    registerUser = (req: Request, res: Response ) => {
+      registerUser = (req: Request, res: Response ) => {
         const [error, registerUserDto] = RegisterUserDto.create(req.body);
         if ( error ) return res.status(400).json({ error });
-        
-        this.authRepository.register(registerUserDto!)
 
-        .then( async (user) => {
-          
-          res.json({
-            user,
-            token: await JwtAdapter.generateToken({ id: user.id })
-        }) ;
-
-        })
+        new RegisterUser(this.authRepository)
+        .execute( registerUserDto! )
+        .then( data => res.json(data) )
         .catch( error => this.handleError(error, res) );
+        
+        // this.authRepository.register(registerUserDto!)
+
+        // .then( async (user) => {
+          
+        //   res.json({
+        //     user,
+        //     token: await JwtAdapter.generateToken({ id: user.id })
+        // }) ;
+
+        // })
+        // .catch( error => this.handleError(error, res) );
     }
 
     loginUser = (req: Request, res: Response ) => {
-        res.json('loginUser controller')
-
+      const [error, loginUserDto] = LoginUserDto.create(req.body);
+      if ( error ) return res.status(400).json({ error });
+      
+      new LoginUser(this.authRepository)
+        .execute( loginUserDto! )
+        .then( data => res.json(data) )
+        .catch( error => this.handleError(error, res) );
     }
+  
 
     getUsers = (req: Request, res: Response ) => {
     
