@@ -30,7 +30,7 @@ export class AuthController {
           
           res.json({
             user,
-            token: await JwtAdapter.generateToken({ email: user.email })
+            token: await JwtAdapter.generateToken({ id: user.id })
         }) ;
 
         })
@@ -47,8 +47,8 @@ export class AuthController {
       UserModel.find()
         .then( users => {
           res.json({
-            users,
-            token: req.body.token
+            // users,
+            token: req.body.payload
         })  
         })
         .catch(()=> res.status(500).json({ error: 'Internal server error' }))

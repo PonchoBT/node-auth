@@ -1,11 +1,12 @@
 import { NextFunction, Request, Response } from 'express';
+import { JwtAdapter } from '../../config';
 
 
 
 export class AuthMiddleware {
 
 
-    static validateJWT = (req: Request, res: Response, next: NextFunction) =>{
+    static validateJWT = async (req: Request, res: Response, next: NextFunction) =>{
 
         // console.log("Paso por el middleware")
         const authorization = req.header('Authorization');
@@ -16,8 +17,10 @@ export class AuthMiddleware {
 
 try {
 
+        const payload = await JwtAdapter.validateToken(token);
+        if ( !payload ) return res.status(401).json({ error: 'Invalid token' });
 
-        req.body.token = token 
+        req.body.payload = payload 
 
         next();
 
